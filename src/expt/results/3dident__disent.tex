@@ -1,0 +1,28 @@
+\begin{tabular}{rccc}
+\toprule
+& \textbf{Ada-GVAE} & \textbf{BetaTCVAE} & \textbf{TVAE} \\
+\midrule
+\multicolumn{ 4 }{l}{\textbf{reconstruction}  (ELBO BPD)} \\
+\midrule
+\textbf{in-distribution} & 3.267 ± 0.001 & \textbf{3.261} ± 0.000 & 3.282 ± 0.005 \\
+\textbf{out-of-distribution} & 3.274 ± 0.001 & \textbf{3.264} ± 0.001 & 3.291 ± 0.006 \\
+\midrule
+\multicolumn{ 4 }{l}{\textbf{concept learning}  (sliced Wasserstein)} \\
+\midrule
+\textbf{obs} & 0.267 ± 0.011 & 0.257 ± 0.012 & \textbf{0.245} ± 0.003 \\
+\textbf{bg} & \textbf{0.232} ± 0.012 & 0.254 ± 0.009 & 0.262 ± 0.006 \\
+\textbf{obj} & \textbf{0.243} ± 0.007 & 0.263 ± 0.010 & 0.259 ± 0.007 \\
+\textbf{sl} & 0.253 ± 0.013 & 0.254 ± 0.007 & \textbf{0.250} ± 0.009 \\
+\addlinespace
+\textbf{concept learning mean} & \textbf{0.249} ± 0.011 & 0.257 ± 0.010 & 0.254 ± 0.006 \\
+\midrule
+\multicolumn{ 4 }{l}{\textbf{composition}  (sliced Wasserstein)} \\
+\midrule
+\textbf{(bg, obj)} & \textbf{0.252} ± 0.014 & 0.261 ± 0.011 & 0.256 ± 0.010 \\
+\textbf{(bg, sl)} & \textbf{0.227} ± 0.009 & 0.255 ± 0.012 & 0.241 ± 0.013 \\
+\textbf{(obj, sl)} & 0.274 ± 0.010 & \textbf{0.247} ± 0.005 & 0.269 ± 0.009 \\
+\addlinespace
+\textbf{composition mean} & \textbf{0.251} ± 0.011 & 0.254 ± 0.009 & 0.256 ± 0.011 \\
+\midrule
+\bottomrule
+\end{tabular}

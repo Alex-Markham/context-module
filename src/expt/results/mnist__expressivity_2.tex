@@ -1,0 +1,23 @@
+\begin{tabular}{rcccccc}
+\toprule
+& \textbf{2.15.22} & \textbf{2.15.5} & \textbf{2.22.22} & \textbf{2.22.5} & \textbf{2.50.22} & \textbf{2.50.5} \\
+\midrule
+\multicolumn{ 7 }{l}{\textbf{reconstruction}  (ELBO BPD)} \\
+\midrule
+\textbf{in-distribution} & 0.260 ± 0.005 & 0.259 ± 0.005 & 0.255 ± 0.003 & \textbf{0.252} ± 0.003 & 0.265 ± 0.001 & 0.265 ± 0.006 \\
+\textbf{out-of-distribution} & --- & --- & --- & --- & --- & --- \\
+\midrule
+\multicolumn{ 7 }{l}{\textbf{concept learning}  (sliced Wasserstein)} \\
+\midrule
+\textbf{obs} & 0.087 ± 0.003 & 0.099 ± 0.006 & \textbf{0.082} ± 0.005 & 0.095 ± 0.006 & 0.086 ± 0.004 & 0.092 ± 0.008 \\
+\textbf{scaled} & 0.073 ± 0.011 & \textbf{0.062} ± 0.002 & 0.065 ± 0.004 & 0.067 ± 0.005 & 0.068 ± 0.003 & 0.072 ± 0.004 \\
+\textbf{shear} & 0.115 ± 0.006 & 0.119 ± 0.006 & \textbf{0.108} ± 0.006 & 0.122 ± 0.006 & 0.116 ± 0.004 & 0.118 ± 0.004 \\
+\textbf{shift} & 0.106 ± 0.009 & 0.113 ± 0.005 & 0.108 ± 0.008 & 0.111 ± 0.002 & \textbf{0.096} ± 0.003 & 0.115 ± 0.005 \\
+\textbf{swel} & 0.119 ± 0.006 & 0.126 ± 0.007 & \textbf{0.107} ± 0.005 & 0.118 ± 0.006 & 0.111 ± 0.007 & 0.118 ± 0.007 \\
+\textbf{thic} & 0.202 ± 0.016 & 0.178 ± 0.007 & 0.180 ± 0.007 & \textbf{0.171} ± 0.014 & 0.176 ± 0.010 & 0.178 ± 0.015 \\
+\textbf{thin} & 0.065 ± 0.006 & \textbf{0.064} ± 0.004 & 0.069 ± 0.005 & 0.072 ± 0.010 & 0.073 ± 0.007 & 0.067 ± 0.006 \\
+\addlinespace
+\textbf{concept learning mean} & 0.110 ± 0.008 & 0.109 ± 0.006 & \textbf{0.103} ± 0.006 & 0.108 ± 0.007 & 0.104 ± 0.005 & 0.109 ± 0.007 \\
+\midrule
+\bottomrule
+\end{tabular}

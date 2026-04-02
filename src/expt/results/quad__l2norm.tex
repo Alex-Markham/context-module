@@ -1,0 +1,37 @@
+\begin{tabular}{rcccc}
+\toprule
+& \textbf{0.0.0.0} & \textbf{0.1.0.0} & \textbf{0.10.0.0} & \textbf{0.100.0.0} \\
+\midrule
+\multicolumn{ 5 }{l}{\textbf{reconstruction}  (ELBO BPD)} \\
+\midrule
+\textbf{in-distribution} & 0.519 ± 0.022 & 0.529 ± 0.029 & 0.550 ± 0.029 & \textbf{0.507} ± 0.024 \\
+\textbf{out-of-distribution} & 0.720 ± 0.069 & \textbf{0.662} ± 0.058 & 0.676 ± 0.023 & 0.685 ± 0.040 \\
+\midrule
+\multicolumn{ 5 }{l}{\textbf{concept learning}  (sliced Wasserstein)} \\
+\midrule
+\textbf{obs} & 0.056 ± 0.003 & \textbf{0.054} ± 0.001 & 0.055 ± 0.002 & 0.054 ± 0.001 \\
+\textbf{quad1} & 0.062 ± 0.003 & 0.058 ± 0.003 & 0.061 ± 0.003 & \textbf{0.053} ± 0.004 \\
+\textbf{quad2} & 0.061 ± 0.005 & \textbf{0.054} ± 0.003 & 0.062 ± 0.002 & 0.056 ± 0.002 \\
+\textbf{quad3} & 0.063 ± 0.002 & 0.057 ± 0.002 & 0.059 ± 0.005 & \textbf{0.055} ± 0.005 \\
+\textbf{quad4} & 0.065 ± 0.007 & 0.053 ± 0.003 & 0.058 ± 0.002 & \textbf{0.052} ± 0.004 \\
+\textbf{size} & 0.075 ± 0.007 & 0.073 ± 0.009 & 0.076 ± 0.007 & \textbf{0.070} ± 0.004 \\
+\textbf{orientation} & 0.057 ± 0.003 & 0.058 ± 0.004 & 0.063 ± 0.004 & \textbf{0.056} ± 0.005 \\
+\addlinespace
+\textbf{concept learning mean} & 0.063 ± 0.004 & 0.058 ± 0.003 & 0.062 ± 0.003 & \textbf{0.057} ± 0.004 \\
+\midrule
+\multicolumn{ 5 }{l}{\textbf{composition}  (sliced Wasserstein)} \\
+\midrule
+\textbf{(quad1, quad2)} & 0.100 ± 0.028 & 0.070 ± 0.007 & 0.069 ± 0.003 & \textbf{0.058} ± 0.003 \\
+\textbf{(quad1, quad3)} & 0.078 ± 0.016 & 0.073 ± 0.014 & 0.096 ± 0.021 & \textbf{0.063} ± 0.005 \\
+\textbf{(quad1, quad4)} & 0.094 ± 0.032 & 0.101 ± 0.029 & 0.081 ± 0.012 & \textbf{0.079} ± 0.019 \\
+\textbf{(quad1, size)} & 0.101 ± 0.010 & 0.095 ± 0.011 & 0.098 ± 0.004 & \textbf{0.093} ± 0.007 \\
+\textbf{(quad1, orientation)} & 0.060 ± 0.003 & \textbf{0.056} ± 0.004 & 0.061 ± 0.002 & 0.058 ± 0.003 \\
+\textbf{(quad2, quad3)} & \textbf{0.067} ± 0.007 & 0.071 ± 0.009 & 0.080 ± 0.006 & 0.071 ± 0.009 \\
+\textbf{(quad2, quad4)} & 0.068 ± 0.004 & 0.072 ± 0.009 & 0.067 ± 0.003 & \textbf{0.063} ± 0.006 \\
+\textbf{(quad2, size)} & 0.099 ± 0.008 & \textbf{0.084} ± 0.006 & 0.097 ± 0.008 & 0.089 ± 0.005 \\
+\textbf{(quad2, orientation)} & 0.063 ± 0.004 & \textbf{0.058} ± 0.003 & 0.061 ± 0.003 & 0.061 ± 0.003 \\
+\addlinespace
+\textbf{composition mean} & 0.081 ± 0.013 & 0.076 ± 0.010 & 0.079 ± 0.007 & \textbf{0.071} ± 0.007 \\
+\midrule
+\bottomrule
+\end{tabular}

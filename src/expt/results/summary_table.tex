@@ -1,0 +1,19 @@
+\begin{tabular}{c r *{3}{c} *{3}{c} *{3}{c} *{3}{c}}
+\toprule
+& & \multicolumn{3}{c}{\textbf{\texttt{quad}* (independent)}} & \multicolumn{3}{c}{\textbf{\texttt{quad}* (dependent)}} & \multicolumn{3}{c}{\textbf{MNIST**}} & \multicolumn{3}{c}{\textbf{3DIdent**}} \\
+\cmidrule(lr){3-5} \cmidrule(lr){6-8} \cmidrule(lr){9-11} \cmidrule(lr){12-14}
+& & \textbf{Concept} & \textbf{Compo} & \textbf{Recon} & \textbf{Concept} & \textbf{Compo} & \textbf{Recon} & \textbf{Concept} & \textbf{Compo} & \textbf{Recon} & \textbf{Concept} & \textbf{Compo} & \textbf{Recon} \\
+\midrule
+\multirow{3}{*}{\rotatebox{90}{\scriptsize\textbf{ours}}} & \textbf{CM (end-to-end)} & 0.063 & \textbf{0.081} & 0.519 & 0.116 & 0.127 & 0.828 & \textbf{0.035} & - & \textbf{0.135} & \textbf{0.014} & \textbf{0.051} & 0.528 \\
+ & \textbf{CM (fine-tune)} & \textbf{0.059} & 0.086 & 0.518 & \textbf{0.112} & \textbf{0.121} & 0.840 & 0.037 & - & 0.136 & 0.031 & 0.063 & 0.549 \\
+ & \textbf{CM (frozen)} & 0.086 & 0.132 & 0.559 & 0.121 & 0.134 & 0.889 & 0.052 & - & 0.161 & 0.048 & 0.063 & 0.609 \\
+\addlinespace\midrule\addlinespace
+\multirow{3}{*}{\rotatebox{90}{\scriptsize\textbf{ablations}}} & \textbf{base} & 0.175 & 0.288 & \textbf{0.444} & 0.170 & 0.222 & 0.767 & 0.102 & - & 0.271 & 0.056 & 0.092 & 4.966 \\
+ & \textbf{base pooled} & 0.166 & 0.248 & 0.446 & 0.167 & 0.212 & \textbf{0.746} & 0.105 & - & 0.139 & 0.049 & 0.056 & 0.559 \\
+ & \textbf{CM pooled} & 0.202 & 0.306 & 0.840 & 0.166 & 0.203 & 0.752 & 0.099 & - & 0.143 & 0.041 & 0.068 & \textbf{0.516} \\
+\addlinespace\addlinespace
+\multirow{3}{*}{\rotatebox{90}{\scriptsize\textbf{baselines}}} & \textbf{Ada-GVAE} & 0.335 & 0.355 & 2.017 & 0.375 & 0.377 & 2.443 & 0.500 & - & 1.035 & 0.249 & 0.251 & 3.267 \\
+ & \textbf{BetaTCVAE} & 0.330 & 0.346 & 1.973 & 0.366 & 0.374 & 2.408 & 0.484 & - & 1.036 & 0.257 & 0.254 & 3.261 \\
+ & \textbf{TVAE} & 0.334 & 0.341 & 2.048 & 0.370 & 0.368 & 2.455 & 0.486 & - & 1.037 & 0.254 & 0.256 & 3.282 \\
+\bottomrule
+\end{tabular}

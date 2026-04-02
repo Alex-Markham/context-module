@@ -1,0 +1,47 @@
+[project]
+name = "conceptualizer"
+version = "0.1.0"
+description = "A torch-compatible module for intervention-based concept learning in deep generative models."
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    {name = "Alex Markham", email = "alex.markham@causal.dev"},
+    {name = "Bryon Aragam", email = "bryon@chicagobooth.edu"},
+    {name = "Isaac Hirsch", email = ""},
+]
+maintainers = [
+    {name = "Alex Markham", email = "alex.markham@causal.dev"},
+]
+dependencies = [
+    "torch>=2.7.0",
+]
+
+[tool.uv]
+cache-dir = "./.uv_cache"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project.optional-dependencies]
+repro = [
+    "disent>=0.8.0",
+    "lightning>=2.5.6",
+    "matplotlib>=3.10.7",
+    "numba>=0.62.1",
+    "pandas>=2.3.3",
+    "pot>=0.9.6.post1",
+    "seaborn>=0.13.2",
+    "sempler>=0.2.14",
+    "snakefmt>=0.11.0",
+    "snakemake>=9.3.0",
+    "snakemake-executor-plugin-slurm>=1.8.0",
+    "torchinfo>=1.8.0",
+    "torchvision>=0.22.0",
+    "tqdm>=4.67.1",
+    "zenodo-get>=3.0.0",
+]
+
+[project.scripts]
+repro = "conceptualizer.repro:main"

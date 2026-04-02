@@ -1,0 +1,13 @@
+method,dataset,concept,compo,recon
+CM (end-to-end),3dident,0.014,0.051,0.528	
+CM (fine-tune),3dident,0.031,0.063,0.549
+CM (frozen),3dident,0.048,0.063,0.609
+base,3dident,0.056,0.092,4.966
+base pooled,3dident,0.049,0.056,0.559
+CM pooled,3dident,0.041,0.068,0.516
+CM (end-to-end),mnist,0.035,,0.135
+CM (fine-tune),mnist,0.037,,0.136
+CM (frozen),mnist,0.052,,0.161
+base,mnist,0.102,,0.271
+base pooled,mnist,0.105,,0.139
+CM pooled,mnist,0.099,,0.143

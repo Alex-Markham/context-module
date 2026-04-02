@@ -1,0 +1,462 @@
+config = {"seeds": range(5), "max_epochs": 100}
+
+
+rule all:
+    input:
+        "results/summary_table.tex",
+        expand(
+            "results/{dataset}__{expt}.tex",
+            dataset=["quad", "mnist"],
+            expt=[
+                "ablation",
+                "expressivity_2",
+                "expressivity_4",
+                "beta",
+                "groupnorm",
+                "l2norm",
+            ],
+        ),
+        "results/3dident__disent.tex",
+        "results/quad_causal__ablation.tex",
+
+
+base_path = (
+    "results/"
+    "dataset={dataset}/"
+    "arch={arch_id}/"
+    "method={arch_flag}/"
+    "expressivity={exp}/"
+    "beta={beta}/"
+    "sparsity={reg}/"
+    "seed={seed}/"
+)
+to_tune = expand(base_path + "vae.pth", arch_flag=[1], allow_missing=True)[0]
+disent_path = "results/dataset={dataset}/arch=disent/method={arch_flag}/seed={seed}/"
+
+
+rule prepare_data:
+    output:
+        directory("data/{dataset}"),
+    script:
+        "scripts/prepare_data.py"
+
+
+rule train_model:
+    input:
+        rules.prepare_data.output,
+    output:
+        base_path + "vae.pth",
+    params:
+        epochs=config["max_epochs"],
+        microbatches=8,
+    wildcard_constraints:
+        arch_flag="0|1|2|3",
+    shell:
+        """
+        repro --snakemake \
+              --epochs {params.epochs} \
+              --dataset {wildcards.dataset} \
+              --arch_id {wildcards.arch_id} \
+              --arch_flag {wildcards.arch_flag} \
+              --exp {wildcards.exp} \
+              --beta {wildcards.beta} \
+              --reg {wildcards.reg} \
+              --seed {wildcards.seed} \
+              --microbatches {params.microbatches}
+        """
+
+
+rule fine_tune:
+    input:
+        to_tune,
+    output:
+        base_path + "vae.pth",
+    params:
+        epochs=config["max_epochs"],
+        microbatches=8,
+    wildcard_constraints:
+        arch_flag="4|5",
+    shell:
+        """
+        repro --snakemake \
+              --epochs {params.epochs} \
+              --dataset {wildcards.dataset} \
+              --arch_id {wildcards.arch_id} \
+              --arch_flag {wildcards.arch_flag} \
+              --exp {wildcards.exp} \
+              --beta {wildcards.beta} \
+              --reg {wildcards.reg} \
+              --seed {wildcards.seed} \
+              --microbatches {params.microbatches} \
+              --finetune_pt {input}
+        """
+
+
+rule eval_model:
+    input:
+        base_path + "vae.pth",
+    output:
+        reconstruction=base_path + "val_elbo.csv",
+        ood_reconstruction=base_path + "ood_val_elbo.csv",
+        concept_learning=base_path + "metrics.csv",
+        composition=base_path + "ood_metrics.csv",
+    params:
+        epochs=config["max_epochs"],
+        microbatches=8,
+        finetune=lambda wildcards: (
+            f"--finetune_pt {expand(to_tune,**{k: v for k, v in wildcards.items() if k!= 'arch_flag'})[0]}"
+            if wildcards.arch_flag in ["4", "5"]
+            else ""
+        ),
+    shell:
+        """
+        repro --snakemake \
+              --epochs {params.epochs} \
+              --dataset {wildcards.dataset} \
+              --arch_id {wildcards.arch_id} \
+              --arch_flag {wildcards.arch_flag} \
+              --exp {wildcards.exp} \
+              --beta {wildcards.beta} \
+              --reg {wildcards.reg} \
+              --seed {wildcards.seed} \
+              --microbatches {params.microbatches} {params.finetune} \
+              --eval_only
+        """
+
+
+rule format_result:
+    input:
+        reconstruction=rules.eval_model.output.reconstruction,
+        ood_reconstruction=rules.eval_model.output.ood_reconstruction,
+        concept_learning=rules.eval_model.output.concept_learning,
+        composition=rules.eval_model.output.composition,
+    output:
+        base_path + "run_results.csv",
+    script:
+        "scripts/format_result.py"
+
+
+rule train_disent:
+    input:
+        rules.prepare_data.output,
+    output:
+        module=disent_path + "module.ckpt",
+    params:
+        latent_dim=6 * 32,  # same as quad conceptualizer
+        batch_size=512,
+        epochs=config["max_epochs"],
+    script:
+        "scripts/train_disent.py"
+
+
+rule eval_disent:
+    input:
+        module=rules.train_disent.output.module,
+    output:
+        disent_path + "evaluation.csv",
+    params:
+        latent_dim=6 * 32,  # same as quad conceptualizer
+        batch_size=512,
+    script:
+        "scripts/eval_disent.py"
+
+
+rule collect_quad_ablation_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["quad"],
+            arch_id=["simple64bn"],
+            arch_flag=[0, 1, 2, 3, 4, 5],
+            exp=["2.32.8"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0"],
+            seed=config["seeds"],
+        )
+        + collect(
+            rules.eval_disent.output,
+            dataset=["quad"],
+            arch_flag=[
+                "Ada-GVAE",
+                "BetaTCVAE",
+                "TVAE",
+            ],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/quad__ablation.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_expressivity_2_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["quad"],
+            arch_id=["simple64bn"],
+            arch_flag=[2],
+            exp=["2.16.8", "2.16.16", "2.16.32", "2.32.8", "2.32.16", "2.32.32"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/quad__expressivity_2.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_expressivity_4_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["quad"],
+            arch_id=["simple64bn"],
+            arch_flag=[2],
+            exp=["4.16.8", "4.16.16", "4.16.32", "4.32.8", "4.32.16", "4.32.32"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/quad__expressivity_4.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_beta_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["quad"],
+            arch_id=["simple64bn"],
+            arch_flag=[2],
+            exp=["2.32.8"],
+            beta=[0.5, 1.0, 2.0, 4.0],  # format to 1 decimal place
+            reg=["0.0.0.0"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/quad__beta.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_groupnorm_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["quad"],
+            arch_id=["simple64bn"],
+            arch_flag=[2],
+            exp=["2.32.8"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0", "1.0.0.0", "10.0.0.0", "100.0.0.0"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/quad__groupnorm.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_l2norm_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["quad"],
+            arch_id=["simple64bn"],
+            arch_flag=[2],
+            exp=["2.32.8"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0", "0.1.0.0", "0.10.0.0", "0.100.0.0"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/quad__l2norm.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_quad_causal_ablation_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["quad_causal"],
+            arch_id=["simple64bn"],
+            arch_flag=[0, 1, 2, 3, 4, 5],
+            exp=["2.32.8"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0"],
+            seed=config["seeds"],
+        )
+        + collect(
+            rules.eval_disent.output,
+            dataset=["quad_causal"],
+            arch_flag=["Ada-GVAE", "BetaTCVAE", "TVAE"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/quad_causal__ablation.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_3dident_disent_results:
+    input:
+        collect(
+            rules.eval_disent.output,
+            dataset=["3dident"],
+            arch_flag=["Ada-GVAE", "BetaTCVAE", "TVAE"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/3dident__disent.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_mnist_mnist_ablation_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["mnist"],
+            arch_id=["conv3"],
+            arch_flag=[0, 1, 2, 3, 4, 5],
+            exp=["2.15.5"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0"],
+            seed=config["seeds"],
+        )
+        + collect(
+            rules.eval_disent.output,
+            dataset=["mnist"],
+            arch_flag=[
+                "Ada-GVAE",
+                "BetaTCVAE",
+                "TVAE",
+            ],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/mnist__ablation.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_mnist_expressivity_2_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["mnist"],
+            arch_id=["conv3"],
+            arch_flag=[2],
+            exp=["2.15.5", "2.22.5", "2.50.5", "2.15.22", "2.22.22", "2.50.22"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/mnist__expressivity_2.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_mnist_expressivity_4_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["mnist"],
+            arch_id=["conv3"],
+            arch_flag=[2],
+            exp=["4.15.5", "4.22.5", "4.50.5", "4.15.22", "4.22.22", "4.50.22"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/mnist__expressivity_4.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_mnist_beta_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["mnist"],
+            arch_id=["conv3"],
+            arch_flag=[2],
+            exp=["2.15.5"],
+            beta=[0.5, 1.0, 2.0, 4.0],  # format to 1 decimal place
+            reg=["0.0.0.0"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/mnist__beta.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_mnist_groupnorm_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["mnist"],
+            arch_id=["conv3"],
+            arch_flag=[2],
+            exp=["2.15.5"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0", "1.0.0.0", "10.0.0.0", "100.0.0.0"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/mnist__groupnorm.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule collect_mnist_l2norm_results:
+    input:
+        collect(
+            rules.format_result.output,
+            dataset=["mnist"],
+            arch_id=["conv3"],
+            arch_flag=[2],
+            exp=["2.15.5"],
+            beta=[1.0],  # format to 1 decimal place
+            reg=["0.0.0.0", "0.1.0.0", "0.10.0.0", "0.100.0.0"],
+            seed=config["seeds"],
+        ),
+    output:
+        "results/mnist__l2norm.csv",
+    script:
+        "scripts/collect.py"
+
+
+rule format_table:
+    input:
+        "results/{dataset}__{expt}.csv",
+    output:
+        "results/{dataset}__{expt}.tex",
+    script:
+        "scripts/format_table.py"
+
+
+rule format_summary_table:
+    input:
+        quad="results/quad__ablation.tex",
+        quad_causal="results/quad_causal__ablation.tex",
+        mnist="results/mnist__ablation.tex",
+        ident3d="results/3dident__disent.tex",
+        nvae="results/summary__nvae_manual.csv",
+    output:
+        "results/summary_table.tex",
+    script:
+        "scripts/format_summary_table.py"
+
+
+rule test:
+    input:
+        "results/dataset=quad/arch=simple64bn/method=2/expressivity=2.32.8/beta=1.0/sparsity=0.0.0.0/seed=0/run_results.csv",
