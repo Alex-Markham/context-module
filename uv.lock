@@ -262,14 +262,9 @@ wheels = [
 
 [[package]]
 name = "conceptualizer"
-version = "0.2.0"
+version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "torch" },
-]
-
-[package.optional-dependencies]
-repro = [
     { name = "disent" },
     { name = "lightning" },
     { name = "matplotlib" },
@@ -281,6 +276,7 @@ repro = [
     { name = "snakefmt" },
     { name = "snakemake" },
     { name = "snakemake-executor-plugin-slurm" },
+    { name = "torch" },
     { name = "torchinfo" },
     { name = "torchvision" },
     { name = "tqdm" },
@@ -289,24 +285,23 @@ repro = [
 
 [package.metadata]
 requires-dist = [
-    { name = "disent", marker = "extra == 'repro'", specifier = ">=0.8.0" },
-    { name = "lightning", marker = "extra == 'repro'", specifier = ">=2.5.6" },
-    { name = "matplotlib", marker = "extra == 'repro'", specifier = ">=3.10.7" },
-    { name = "numba", marker = "extra == 'repro'", specifier = ">=0.62.1" },
-    { name = "pandas", marker = "extra == 'repro'", specifier = ">=2.3.3" },
-    { name = "pot", marker = "extra == 'repro'", specifier = ">=0.9.6.post1" },
-    { name = "seaborn", marker = "extra == 'repro'", specifier = ">=0.13.2" },
-    { name = "sempler", marker = "extra == 'repro'", specifier = ">=0.2.14" },
-    { name = "snakefmt", marker = "extra == 'repro'", specifier = ">=0.11.0" },
-    { name = "snakemake", marker = "extra == 'repro'", specifier = ">=9.3.0" },
-    { name = "snakemake-executor-plugin-slurm", marker = "extra == 'repro'", specifier = ">=1.8.0" },
+    { name = "disent", specifier = ">=0.8.0" },
+    { name = "lightning", specifier = ">=2.5.6" },
+    { name = "matplotlib", specifier = ">=3.10.7" },
+    { name = "numba", specifier = ">=0.62.1" },
+    { name = "pandas", specifier = ">=2.3.3" },
+    { name = "pot", specifier = ">=0.9.6.post1" },
+    { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "sempler", specifier = ">=0.2.14" },
+    { name = "snakefmt", specifier = ">=0.11.0" },
+    { name = "snakemake", specifier = ">=9.3.0" },
+    { name = "snakemake-executor-plugin-slurm", specifier = ">=1.8.0" },
     { name = "torch", specifier = ">=2.7.0" },
-    { name = "torchinfo", marker = "extra == 'repro'", specifier = ">=1.8.0" },
-    { name = "torchvision", marker = "extra == 'repro'", specifier = ">=0.22.0" },
-    { name = "tqdm", marker = "extra == 'repro'", specifier = ">=4.67.1" },
-    { name = "zenodo-get", marker = "extra == 'repro'", specifier = ">=3.0.0" },
+    { name = "torchinfo", specifier = ">=1.8.0" },
+    { name = "torchvision", specifier = ">=0.22.0" },
+    { name = "tqdm", specifier = ">=4.67.1" },
+    { name = "zenodo-get", specifier = ">=3.0.0" },
 ]
-provides-extras = ["repro"]
 
 [[package]]
 name = "conda-inject"
