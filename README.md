@@ -44,7 +44,7 @@ After [installing uv](https://docs.astral.sh/uv/getting-started/):
 		total                                    1024
         ```
 - `uv run snakemake test --cores 8` can be run from `src/expt/` to test that everything works.
-	- It will download the [`quad`](https://zenodo.org/records/19346614) dataset and train one model. 
+	- It will download the [`quad`](https://zenodo.org/records/19346613) dataset and train one model. 
 	- This requires a GPU and takes around 90 mins on an H100.
 	- The trained model and various evaluation metrics and plots can then be found at `src/expt/results/dataset=quad/arch=simple64bn/method=2/expressivity=2.32.8/beta=1.0/sparsity=0.0.0.0/seed=0/`; in particular, a plot of original vs reconstructed images can then be found there (`reconstructions.png`) and generated samples can be found there in the `random_samples` subdirectory, for example `random_samples/quad2-quad3.png`.
 

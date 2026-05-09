@@ -110,6 +110,15 @@ elif dataset_name == "mnist":
 
 ####################################################################################################################
 elif dataset_name == "3dident":
+    download(
+        record_or_doi="19346613",
+        output_dir=root,
+        file_glob="3dident.zip",
+    )
+    zip_file_path = os.path.join(root, "3dident.zip")
+    with zipfile.ZipFile(zip_file_path, "r") as z:
+        z.extractall(root)
+
     source_dirs = {
         "obs": root + "3DIdent_Concepts/obs/images",
         "bg": root + "3DIdent_Concepts/bg/images",
